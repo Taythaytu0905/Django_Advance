@@ -4,10 +4,25 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Recipe
-from recipe.serializers import RecipeSerializer
+from core.models import Recipe, Tag, Ingredient
+from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
 
 RECIPES_URL = reverse('recipe:recipe-list')
+
+
+def detail_url(recipe_id):
+    """Return recipe detail URL"""
+    return reverse('recipe:recipe-detail', args=[recipe_id])
+
+
+def sample_tag(user, name='Sample tag'):
+    """Create and return a sample tag"""
+    return Tag.objects.create(user=user, name=name)
+
+
+def sample_ingredient(user, name='Sample ingredient'):
+    """Create and return a sample ingredient"""
+    return Ingredient.objects.create(user=user, name=name)
 
 
 def sample_recipe(user, **params):
@@ -63,17 +78,12 @@ class PrivateRecipesApiTests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['title'], recipe.title)
 
-    # def test_create_recipe_successful(self):
-    #     """Test creating a new recipe"""
-    #     payload = {'title': 'Test tag', 'time_minutes': 5, 'price': 10.00}
-    #     self.client.post(RECIPES_URL, payload)
-    #     exists = Recipe.objects.filter(
-    #         user=self.user
-    #     ).exists()
-    #     self.assertTrue(exists)
-    #
-    # def test_create_recipe_invalid(self):
-    #     """Test creating a new recipe with invalid payload"""
-    #     payload = {'title': ''}
-    #     res = self.client.post(RECIPES_URL, payload)
-    #     self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_view_recipe_detail(self):
+        """Test viewing a recipe detail"""
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        recipe.ingredients.add(sample_ingredient(user=self.user))
+        res = self.client.get(detail_url(recipe.id))
+        serializer = RecipeDetailSerializer(recipe)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
