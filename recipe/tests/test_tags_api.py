@@ -104,4 +104,4 @@ class PrivateTagsApiTests(TestCase):
         )
         recipe2.tags.add(tag)
         res = self.client.get(TAGS_URL, {"assigned_only": 1})
-        self.assertIn(len(res.data), 1)
+        self.assertEqual(len(res.data), 1)

@@ -46,3 +46,7 @@ O
 .env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
 =
 users/urls.py,7/e/7ebb6dc32a2768a7e73ce1c83409f9c85bd4ad6a
+;
+.travis.yml,d/e/dea01dd89a3b602828e630677fde5d77c06441c8
+@
+requirements.txt,1/9/19359a61ae2446b51b549167b014da2fcf265768
