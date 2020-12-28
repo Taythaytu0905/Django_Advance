@@ -1,4 +1,3 @@
-import os
 import tempfile
 
 from PIL import Image
@@ -199,7 +198,6 @@ class RecipeImageUploadTests(TestCase):
             res = self.client.post(url, {"image": ntf}, format='multipart')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn('image', res.data)
-        # self.assertTrue(os.path.exists(self.recipe.image.path))
 
     def test_upload_image_bad_request(self):
         """Test uploading an invalid image"""
@@ -228,12 +226,15 @@ class RecipeImageUploadTests(TestCase):
         """Test returning recipes with specific ingredients"""
         recipe1 = sample_recipe(user=self.user, title='Do')
         recipe2 = sample_recipe(user=self.user, title='Tin')
-        ingredient1 = sample_ingredient(user=self.user, name="Test ingredient")
-        ingredient2 = sample_ingredient(user=self.user, name="Test ingredient2")
+        ingredient1 = sample_ingredient(user=self.user,
+                                        name="Test ingredient")
+        ingredient2 = sample_ingredient(user=self.user,
+                                        name="Test ingredient2")
         recipe1.ingredients.add(ingredient1)
         recipe2.ingredients.add(ingredient2)
         recipe3 = sample_recipe(user=self.user, title="Test 3")
-        res = self.client.get(RECIPES_URL, {"ingredients": f'{ingredient1.id},{ingredient2.id}'})
+        res = self.client.get(RECIPES_URL, {
+            "ingredients": f'{ingredient1.id},{ingredient2.id}'})
         serializer1 = RecipeSerializer(recipe1)
         serializer2 = RecipeSerializer(recipe2)
         serializer3 = RecipeSerializer(recipe3)
